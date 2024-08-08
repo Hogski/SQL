@@ -1,0 +1,13 @@
+Summary
+
+SELECT StructureID, PeriodNumber, PeriodYear, SUM(Cost_BForward) AS 'Cost BFWD', SUM(Cost_Additions) AS 'Cost Add', SUM(Cost_TransferIn) AS 'Cost Trns In', SUM(Cost_Disposals) AS 'Cost Disp', SUM(Cost_TransferOut) AS 'Cost Trns Out', SUM(Cost_CForward) AS 'Cost CFWD',
+
+FROM dbo.FixedAssetReport 
+WHERE Company = 'South East' AND PeriodYear IN ('2023', '2024') AND PeriodNumber IN ('1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12')
+AND BookID = 'SE'
+AND (DisposalDate = '19000101' OR DisposalDate >= CONVERT(DATE,CAST('2024' AS VARCHAR(4)) + '-' + CAST('05' AS VARCHAR(2)) + '-' + CAST('01' AS VARCHAR(2))))
+--AND StructureID IN ('FINANCE LEASE FIXTURES', 'OWNED CAR', 'OWNED FIXTURES', 'OWNED COMPUTERS')
+--AND CostCenter IN ('007','022','030','040','045','052','063','087','093','101','108','120','121','135','139','143','170','186','191','192','197','207','227','236','238','239','241','255','260','266','275','276','305','321','352','370','392','399','420','445','454','468','475','495','496','504','723','724','725','742','908')
+AND AssetStatus IN ('1')
+GROUP BY StructureID, PeriodNumber, PeriodYear
+ORDER BY StructureID, PeriodYear, PeriodNumber

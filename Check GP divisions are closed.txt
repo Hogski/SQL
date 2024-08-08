@@ -1,0 +1,10 @@
+--Check GP divisions are closed
+
+select Name, Series, Period, Date, IsLocked, Year, Id 
+FROM [CEFDataWarehouse].[dbo].[Extract] A
+join [CEFDataWarehouse].[dbo].[Branch] B
+ON A.DivisionId = B. CompanyId
+where year = '2023'
+and IsLocked = '0'
+AND EntityType = 'Division'
+order by period, DivisionId

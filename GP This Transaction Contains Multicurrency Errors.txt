@@ -1,0 +1,48 @@
+--Microsoft Great Plains - Error “This Transaction Contains Multicurrency Error(s)”
+
+--Cause:
+
+--This is because the information on the transaction in the MC020102 table doesn’t match the MC00100 table in the DYNAMICS Database.
+
+--Solution:
+
+--Search the MC020102 table for the transactions within the batch for the error in the correct division. For Receivables:
+
+SELECT DCSTATUS, DOCNUMBR, DOCDATE, CURNCYID, EXGTBLID, EXCHDATE, TIME1 FROM MC020102
+WHERE DOCNUMBR IN('XXX','XXX')
+
+--For Payables:
+
+SELECT DCSTATUS, VCHRNMBR, DOCDATE, CURNCYID, EXGTBLID, EXCHDATE, TIME1 FROM MC020103
+WHERE VCHRNMBR IN('')
+
+--This will give you the Currency ID of the Transaction as well as the Exchange Table ID to search the Dynamics table for the correct information. Replace the X’s with the Currency ID and Exhcange Table ID from the transactions.
+
+SELECT [EXGTBLID]
+      ,[CURNCYID]
+      ,[EXCHDATE]
+      ,[TIME1]
+      ,[XCHGRATE]
+      ,[EXPNDATE]
+      ,[DEX_ROW_ID]
+  FROM [DYNAMICS].[dbo].[MC00100]
+  Where CURNCYID = 'XXX'
+  And EXGTBLID = 'XXXXXX'
+Order by EXPNDATE desc
+
+--What you need to look for is that the EXCHDATE and TIME1 information on the MC020102 for the transactions matches the EXCHDATE and TIME1 of the current exchange rate from the Dynamics MC00100 table.
+--If they do not match, this is what causes the error. To fix this update the MC020102 from the division to match the Dynamics MC00100 Table.
+
+--Use the following to update the MC020102 in the relevant division.
+
+--For Receivables:
+
+UPDATE MC020102 SET EXCHDATE = 'COPY AND PASTE EXCHDATE FROM THE DYNAMICS TABLE' WHERE DOCNUMBR IN('XXX','XXX')
+UPDATE MC020102 SET TIME1 = 'COPY AND PASTE TIME1 FROM THE DNAMICS TABLE' WHERE DOCNUMBR IN('XXX','XXX')
+
+--For Payables:
+
+UPDATE MC020103 SET EXCHDATE = 'COPY AND PASTE EXCHDATE FROM THE DYNAMICS TABLE' WHERE VCHRNMBR IN('XXX','XXX')
+UPDATE MC020103 SET TIME1 = 'COPY AND PASTE TIME1 FROM THE DNAMICS TABLE' WHERE VCHRNMBR IN('XXX','XXX')
+
+--This will remove the error from the receivables batch.

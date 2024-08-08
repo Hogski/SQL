@@ -1,0 +1,33 @@
+--To view the batch (replace “xxx” with batch ID):
+
+SELECT [BACHNUMB],[SERIES],[MKDTOPST],[BCHSTTUS],[NUMOFTRX]
+      ,[NOFPSTGS],[BCHCOMNT],[BCHSOURC],[USERID],[CHEKBKID]
+      ,[BCHTOTAL],[BACHDATE],[BCHSTRG1],[BCHSTRG2],[CREATDDT]
+      ,[CNTRLTOT],[APPROVL],[APPRVLDT],[APRVLUSERID],[ORIGIN]
+      ,[ERRSTATE],[TRXSORCE],[PmtMethod],[EFTFileFormat]
+
+  FROM SY00500
+  WHERE BACHNUMB = 'xxx'
+
+--If MKDTOPOST is not 0 then run the following to make the batch available:
+UPDATE SY00500 
+SET MKDTOPST = '0' 
+WHERE BACHNUMB = 'xxx'
+
+--If the BCHSTTUS is not '0' then this will need to be reset to '0':
+UPDATE SY00500 
+SET BCHSTTUS = '0' 
+WHERE BACHNUMB = 'xxx'
+
+--Run the following to show when the user is still working or stuck in the batch:
+SELECT TOP 20 * 
+FROM dynamics..sy00800 
+WHERE CMPNYNAM = 'North West'
+* * * (Also check: SELECT * FROM DYNAMICS..SY00801) * * *
+
+--To clear the user ID from the batch entry:
+DELETE dynamics..sy00800 
+WHERE BACHNUMB = 'xxx'
+AND USERID = 'ke014'
+* * * (DELETE dynamics..sy00801 WHERE RSRCID = 'rmsls000XXXXX' AND USERID = 'xxx') * * *
+
